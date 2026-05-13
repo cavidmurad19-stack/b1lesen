@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Goethe B1 Lesen</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #0f1419;
+  --surface: #1a2332;
+  --surface2: #1e2a3a;
+  --border: #2a3a4a;
+  --accent: #4a9eff;
+  --accent2: #f0c060;
+  --green: #4caf7d;
+  --red: #e05555;
+  --text: #e8edf2;
+  --muted: #7a8a9a;
+  --popup-bg: #0d1520;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.header-title { font-family: 'Crimson Pro', serif; font-size: 20px; font-weight: 600; color: var(--accent); }
+.header-sub { font-size: 11px; color: var(--muted); }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.nav-btn {
+  flex: 1;
+  padding: 10px 4px 8px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: 'Nunito', sans-serif;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: color 0.2s;
+  border-top: 2px solid transparent;
+}
+.nav-btn .icon { font-size: 20px; line-height: 1; }
+.nav-btn.active { color: var(--accent); border-top-color: var(--accent); }
+
+/* ── PAGES ── */
+.page { display: none; flex: 1; overflow-y: auto; padding: 16px; }
+.page.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.card-title {
+  font-family: 'Crimson Pro', serif;
+  font-size: 18px;
+  color: var(--accent2);
+  margin-bottom: 4px;
+}
+.card-sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+
+/* ── TASKS LIST ── */
+.task-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.task-item:hover { border-color: var(--accent); }
+.task-item-name { font-weight: 600; font-size: 14px; }
+.task-item-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.task-item-actions { display: flex; gap: 6px; }
+.btn-icon {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.btn-icon:hover { border-color: var(--accent); color: var(--accent); }
+.btn-icon.del:hover { border-color: var(--red); color: var(--red); }
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.empty-state .big { font-size: 36px; margin-bottom: 10px; }
+
+/* ── ADD TASK FORM ── */
+.form-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; display: block; }
+.form-input, .form-textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  margin-bottom: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+.form-textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
+
+.questions-builder { margin-bottom: 14px; }
+.q-row {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.q-row-top { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+.q-type-select, .q-input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  outline: none;
+}
+.q-type-select { width: 110px; }
+.q-input { flex: 1; }
+.q-options { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.q-opt-item { display: flex; align-items: center; gap: 4px; }
+.q-opt-input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: var(--text);
+  font-size: 12px;
+  width: 130px;
+  font-family: 'Nunito', sans-serif;
+  outline: none;
+}
+.q-correct-label { font-size: 11px; color: var(--muted); }
+.q-correct-select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: var(--text);
+  font-size: 12px;
+  font-family: 'Nunito', sans-serif;
+  outline: none;
+}
+
+.btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.88; }
+.btn-primary { background: var(--accent); color: #0a0f16; }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-success { background: var(--green); color: #0a0f16; }
+.btn-add-q { background: none; border: 1px dashed var(--border); color: var(--muted); border-radius: 10px; padding: 8px; width: 100%; font-size: 13px; cursor: pointer; margin-bottom: 14px; transition: all 0.2s; }
+.btn-add-q:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── READING VIEW ── */
+.reading-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.reading-nav button { padding: 6px 12px; font-size: 13px; }
+.reading-title { font-family: 'Crimson Pro', serif; font-size: 22px; color: var(--accent2); margin-bottom: 14px; }
+
+.letter-block {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.letter-block:last-child { border-bottom: none; }
+.letter-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.letter-badge {
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+.letter-author { font-size: 12px; color: var(--muted); font-style: italic; }
+.letter-text { font-family: 'Crimson Pro', serif; font-size: 16px; line-height: 1.85; color: var(--text); }
+
+.word {
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 1px 1px;
+  transition: background 0.15s;
+}
+.word:hover { background: rgba(74,158,255,0.15); }
+.word.saved { background: rgba(240,192,96,0.18); border-bottom: 2px solid var(--accent2); }
+
+/* ── POPUP ── */
+.overlay { position: fixed; inset: 0; z-index: 998; display: none; }
+.overlay.on { display: block; }
+
+.popup {
+  position: fixed;
+  background: var(--popup-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  width: 290px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  z-index: 999;
+  display: none;
+  animation: popIn 0.15s ease;
+}
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+.popup.on { display: block; }
+.pw { font-family: 'Crimson Pro', serif; font-size: 20px; color: var(--accent2); margin-bottom: 2px; }
+.pi { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+.loading { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.spin { width: 14px; height: 14px; border: 2px solid rgba(74,158,255,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.ptr { font-size: 15px; font-weight: 600; color: var(--green); margin-bottom: 6px; }
+.pmn { font-size: 13px; line-height: 1.6; color: rgba(232,237,242,0.75); border-left: 2px solid var(--accent2); padding-left: 8px; margin-bottom: 12px; }
+.popup-btns { display: flex; gap: 8px; }
+.btn-save {
+  flex: 1; padding: 8px; background: var(--accent2); color: #0a0f16;
+  border: none; border-radius: 8px; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: 'Nunito', sans-serif; transition: opacity 0.2s;
+}
+.btn-save:hover { opacity: 0.85; }
+.btn-save.saved { background: rgba(240,192,96,0.2); color: var(--accent2); }
+.btn-cls {
+  padding: 8px 12px; background: rgba(255,255,255,0.06); color: var(--muted);
+  border: none; border-radius: 8px; font-size: 12px; cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── TRANSLATE ── */
+.tr-btn {
+  width: 100%; padding: 12px; background: var(--accent); color: var(--bg);
+  border: none; border-radius: 12px; font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: opacity 0.2s;
+}
+.tr-btn:hover { opacity: 0.9; }
+.tr-output {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px; font-family: 'Crimson Pro', serif; font-size: 15px; line-height: 1.8;
+  display: none;
+}
+.tr-output.on { display: block; }
+.tr-block { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px dashed var(--border); }
+.tr-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.tr-label { font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; font-family: 'Nunito', sans-serif; }
+
+/* ── TEST ── */
+.test-q {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.test-q-label { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.test-q-text { font-family: 'Crimson Pro', serif; font-size: 16px; margin-bottom: 14px; line-height: 1.5; }
+.test-opts { display: flex; flex-direction: column; gap: 8px; }
+.test-opts.ja-nein { flex-direction: row; }
+.opt-btn {
+  padding: 10px 14px; border: 2px solid var(--border); border-radius: 10px;
+  background: none; color: var(--text); font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 500; cursor: pointer; text-align: left;
+  transition: all 0.2s;
+}
+.opt-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.opt-btn.selected { border-color: var(--accent); background: rgba(74,158,255,0.12); }
+.opt-btn.correct { border-color: var(--green); background: rgba(76,175,125,0.15); color: var(--green); }
+.opt-btn.wrong { border-color: var(--red); background: rgba(224,85,85,0.12); color: var(--red); }
+.opt-btn:disabled { cursor: default; }
+
+.q-explanation {
+  margin-top: 12px; padding: 12px; background: rgba(76,175,125,0.08);
+  border: 1px solid rgba(76,175,125,0.25); border-radius: 10px;
+  font-size: 13px; line-height: 1.6; color: rgba(232,237,242,0.85);
+  display: none;
+}
+.q-explanation.on { display: block; }
+.exp-loading { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+
+.result-card {
+  background: linear-gradient(135deg, var(--accent) 0%, #2d7fd6 100%);
+  border-radius: 16px; padding: 24px; text-align: center; margin-top: 8px;
+  display: none;
+}
+.result-card.on { display: block; }
+.result-num { font-size: 52px; font-weight: 700; font-family: 'Crimson Pro', serif; }
+.result-sub { font-size: 13px; opacity: 0.85; margin-top: 2px; }
+.result-msg { margin-top: 12px; font-size: 15px; font-weight: 600; }
+
+/* ── DICT ── */
+.dict-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.dict-word { font-family: 'Crimson Pro', serif; font-size: 18px; color: var(--accent2); }
+.dict-tr { font-size: 13px; color: var(--muted); }
+.dict-inf { font-size: 11px; color: rgba(122,138,154,0.7); margin-top: 1px; }
+
+/* ── SUBTABS ── */
+.subtabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.stab {
+  padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--border); color: var(--muted);
+  background: none; font-family: 'Nunito', sans-serif; transition: all 0.2s;
+}
+.stab.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+.subview { display: none; }
+.subview.active { display: block; }
+
+.badge-count {
+  background: var(--accent2);
+  color: var(--bg);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">Goethe B1 · Lesen</div>
+    <div class="header-sub">Alman dili oxuma testi</div>
+  </div>
+</div>
+
+<!-- PAGES -->
+
+<!-- 1. TASKS -->
+<div class="page active" id="page-tasks">
+  <div class="subtabs">
+    <button class="stab active" onclick="switchStab('tasks','list',this)">Tapşırıqlar</button>
+    <button class="stab" onclick="switchStab('tasks','add',this)">＋ Yeni</button>
+  </div>
+
+  <div class="subview active" id="tasks-list">
+    <div id="task-list-container"></div>
+  </div>
+
+  <div class="subview" id="tasks-add">
+    <div class="card">
+      <div class="card-title">Yeni Tapşırıq</div>
+      <label class="form-label">Tapşırığın adı</label>
+      <input class="form-input" id="task-name" placeholder="məs: Leserbriefe – Killerspiele">
+
+      <label class="form-label">Mətn (Almanca)</label>
+      <textarea class="form-textarea" id="task-text" placeholder="Mətni buraya yapışdır..." style="min-height:160px;"></textarea>
+
+      <label class="form-label">Suallar</label>
+      <div class="questions-builder" id="q-builder"></div>
+      <button class="btn-add-q" onclick="addQRow()">＋ Sual əlavə et</button>
+
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary" onclick="saveTask()">Saxla</button>
+        <button class="btn btn-secondary" onclick="clearForm()">Sıfırla</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. READING -->
+<div class="page" id="page-read">
+  <div id="read-no-task" class="empty-state">
+    <div class="big">📖</div>
+    <div>Tapşırıqlar bölməsindən bir tapşırıq seç</div>
+  </div>
+  <div id="read-content" style="display:none;">
+    <div class="reading-nav">
+      <button class="btn btn-secondary" onclick="showPage('page-tasks')" style="font-size:12px;padding:6px 10px;">← Geri</button>
+      <div style="font-size:13px;color:var(--muted);flex:1;" id="read-task-name"></div>
+    </div>
+
+    <div class="subtabs">
+      <button class="stab active" onclick="switchStab('read','text',this)">Mətn</button>
+      <button class="stab" onclick="switchStab('read','translate',this)">Tərcümə</button>
+      <button class="stab" onclick="switchStab('read','test',this)">Test</button>
+    </div>
+
+    <div class="subview active" id="read-text">
+      <div id="letters-container"></div>
+    </div>
+
+    <div class="subview" id="read-translate">
+      <button class="tr-btn" id="tr-btn" onclick="translateAll()">🌐 Azərbaycancaya Çevir</button>
+      <div class="tr-output" id="tr-output"></div>
+    </div>
+
+    <div class="subview" id="read-test">
+      <div id="test-container"></div>
+      <button class="btn btn-success" id="submit-btn" onclick="submitTest()" style="width:100%;margin-top:4px;display:none;">Yoxla</button>
+      <div class="result-card" id="result-card">
+        <div class="result-num" id="result-num"></div>
+        <div class="result-sub">düzgün cavab</div>
+        <div class="result-msg" id="result-msg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. DICTIONARY -->
+<div class="page" id="page-dict">
+  <div class="card-title" style="margin-bottom:14px;">📚 Lüğətim <span class="badge-count" id="dict-count">0</span></div>
+  <div id="dict-container"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-btn active" id="nav-tasks" onclick="showPage('page-tasks')">
+    <span class="icon">📋</span>Tapşırıqlar
+  </button>
+  <button class="nav-btn" id="nav-read" onclick="showPage('page-read')">
+    <span class="icon">📖</span>Oxu/Test
+  </button>
+  <button class="nav-btn" id="nav-dict" onclick="showPage('page-dict')">
+    <span class="icon">📚</span>Lüğət
+  </button>
+</div>
+
+<!-- WORD POPUP -->
+<div class="overlay" id="overlay" onclick="closePopup()"></div>
+<div class="popup" id="popup">
+  <div class="pw" id="pw"></div>
+  <div class="pi" id="pi"></div>
+  <div id="pc"><div class="loading"><div class="spin"></div> Yüklənir...</div></div>
+  <div class="popup-btns" style="margin-top:12px;">
+    <button class="btn-save" id="btn-save" onclick="saveWord()">＋ Lüğətə əlavə et</button>
+    <button class="btn-cls" onclick="closePopup()">✕</button>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let tasks = JSON.parse(localStorage.getItem('b1-tasks') || '[]');
+let dictionary = JSON.parse(localStorage.getItem('b1-dict') || '[]');
+let currentTask = null;
+let currentWord = null;
+let currentWordData = null;
+let userAnswers = {};
+let testSubmitted = false;
+let qCount = 0;
+
+// ── INIT ──
+renderTaskList();
+renderDict();
+addQRow();
+
+// ── NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const map = { 'page-tasks': 'nav-tasks', 'page-read': 'nav-read', 'page-dict': 'nav-dict' };
+  document.getElementById(map[id]).classList.add('active');
+  if (id === 'page-dict') renderDict();
+}
+
+function switchStab(group, name, btn) {
+  const prefix = group + '-';
+  document.querySelectorAll(`[id^="${prefix}"]`).forEach(el => {
+    if (el.classList.contains('subview')) el.classList.remove('active');
+  });
+  document.getElementById(prefix + name).classList.add('active');
+  btn.closest('.subtabs').querySelectorAll('.stab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── TASK LIST ──
+function renderTaskList() {
+  const c = document.getElementById('task-list-container');
+  if (!tasks.length) {
+    c.innerHTML = '<div class="empty-state"><div class="big">📝</div><div>"Yeni" düyməsinə basıb tapşırıq əlavə et</div></div>';
+    return;
+  }
+  c.innerHTML = tasks.map((t, i) => `
+    <div class="task-item" onclick="openTask(${i})">
+      <div>
+        <div class="task-item-name">${t.name}</div>
+        <div class="task-item-meta">${t.questions.length} sual · ${t.text.substring(0,40)}...</div>
+      </div>
+      <div class="task-item-actions" onclick="event.stopPropagation()">
+        <button class="btn-icon" onclick="openTask(${i})">▶</button>
+        <button class="btn-icon del" onclick="deleteTask(${i})">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openTask(i) {
+  currentTask = tasks[i];
+  userAnswers = {};
+  testSubmitted = false;
+  document.getElementById('read-task-name').textContent = currentTask.name;
+  document.getElementById('read-no-task').style.display = 'none';
+  document.getElementById('read-content').style.display = 'block';
+  renderLetters();
+  renderTest();
+  resetTranslate();
+  showPage('page-read');
+  // reset subtabs
+  document.querySelectorAll('#page-read .stab').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.querySelectorAll('#page-read .subview').forEach((v,i) => v.classList.toggle('active', i===0));
+}
+
+function deleteTask(i) {
+  if (!confirm('Bu tapşırığı silmək istəyirsən?')) return;
+  tasks.splice(i, 1);
+  localStorage.setItem('b1-tasks', JSON.stringify(tasks));
+  renderTaskList();
+}
+
+// ── ADD TASK FORM ──
+function addQRow() {
+  qCount++;
+  const id = qCount;
+  const div = document.createElement('div');
+  div.className = 'q-row';
+  div.id = 'qrow-' + id;
+  div.innerHTML = `
+    <div class="q-row-top">
+      <select class="q-type-select" id="qtype-${id}" onchange="updateQRow(${id})">
+        <option value="janein">Ja / Nein</option>
+        <option value="multi">Çoxseçimli</option>
+      </select>
+      <input class="q-input" id="qtext-${id}" placeholder="Sualın mətni (şəxsin adı və ya sual)">
+      <button class="btn-icon del" onclick="removeQRow(${id})" style="flex-shrink:0;">✕</button>
+    </div>
+    <div id="qopts-${id}">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="q-correct-label">Düzgün cavab:</span>
+        <select class="q-correct-select" id="qcorrect-${id}">
+          <option value="Ja">Ja</option>
+          <option value="Nein">Nein</option>
+        </select>
+      </div>
+    </div>
+  `;
+  document.getElementById('q-builder').appendChild(div);
+}
+
+function updateQRow(id) {
+  const type = document.getElementById('qtype-' + id).value;
+  const opts = document.getElementById('qopts-' + id);
+  if (type === 'janein') {
+    opts.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="q-correct-label">Düzgün cavab:</span>
+        <select class="q-correct-select" id="qcorrect-${id}">
+          <option value="Ja">Ja</option>
+          <option value="Nein">Nein</option>
+        </select>
+      </div>`;
+  } else {
+    opts.innerHTML = `
+      <div style="margin-bottom:6px;">
+        <div class="q-options" id="qoptlist-${id}">
+          <div class="q-opt-item"><span style="font-size:11px;color:var(--muted);">A:</span><input class="q-opt-input" id="qopt-${id}-0" placeholder="Variant A"></div>
+          <div class="q-opt-item"><span style="font-size:11px;color:var(--muted);">B:</span><input class="q-opt-input" id="qopt-${id}-1" placeholder="Variant B"></div>
+          <div class="q-opt-item"><span style="font-size:11px;color:var(--muted);">C:</span><input class="q-opt-input" id="qopt-${id}-2" placeholder="Variant C"></div>
+          <div class="q-opt-item"><span style="font-size:11px;color:var(--muted);">D:</span><input class="q-opt-input" id="qopt-${id}-3" placeholder="Variant D"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="q-correct-label">Düzgün cavab:</span>
+        <select class="q-correct-select" id="qcorrect-${id}">
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+      </div>`;
+  }
+}
+
+function removeQRow(id) {
+  const el = document.getElementById('qrow-' + id);
+  if (el) el.remove();
+}
+
+function saveTask() {
+  const name = document.getElementById('task-name').value.trim();
+  const text = document.getElementById('task-text').value.trim();
+  if (!name || !text) { alert('Ad və mətn doldurulmalıdır!'); return; }
+
+  const rows = document.querySelectorAll('.q-row');
+  const questions = [];
+  rows.forEach(row => {
+    const id = row.id.replace('qrow-', '');
+    const type = document.getElementById('qtype-' + id)?.value;
+    const qtext = document.getElementById('qtext-' + id)?.value.trim();
+    const correct = document.getElementById('qcorrect-' + id)?.value;
+    if (!qtext) return;
+    const q = { type, text: qtext, correct };
+    if (type === 'multi') {
+      q.options = ['A','B','C','D'].map((l, i) => ({
+        label: l,
+        text: document.getElementById(`qopt-${id}-${i}`)?.value.trim() || ''
+      })).filter(o => o.text);
+    }
+    questions.push(q);
+  });
+
+  tasks.push({ name, text, questions });
+  localStorage.setItem('b1-tasks', JSON.stringify(tasks));
+  renderTaskList();
+  clearForm();
+  switchStab('tasks', 'list', document.querySelector('.stab'));
+  document.querySelectorAll('#page-tasks .stab').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.querySelectorAll('#page-tasks .subview').forEach((v,i) => v.classList.toggle('active', i===0));
+}
+
+function clearForm() {
+  document.getElementById('task-name').value = '';
+  document.getElementById('task-text').value = '';
+  document.getElementById('q-builder').innerHTML = '';
+  qCount = 0;
+  addQRow();
+}
+
+// ── TOKENIZE ──
+function tokenize(text, context) {
+  return text.replace(/([\wäöüÄÖÜß„"]+)/g, m => {
+    const clean = m.replace(/[„""]/g, '');
+    if (!clean || clean.length < 2) return m;
+    return `<span class="word${dictionary.find(d=>d.word===clean)?' saved':''}" data-ctx="${encodeURIComponent(context.substring(0,200))}" onclick="lookupWord(this,'${clean.replace(/'/g,"\\'")}',event)">${m}</span>`;
+  });
+}
+
+// ── LETTERS ──
+function renderLetters() {
+  const c = document.getElementById('letters-container');
+  const text = currentTask.text;
+  // Try to split by numbered sections
+  const parts = text.split(/\n(?=\d+\.\s*\n|Beispiel)/);
+  if (parts.length <= 1) {
+    // No sections, render as one block
+    c.innerHTML = `<div class="letter-block">
+      <div class="letter-text">${tokenize(text, text)}</div>
+    </div>`;
+    return;
+  }
+  // Parse sections
+  let html = '';
+  parts.forEach(part => {
+    const trimmed = part.trim();
+    if (!trimmed) return;
+    const numMatch = trimmed.match(/^(\d+|Beispiel)\.\s*\n?([\s\S]+)/);
+    if (numMatch) {
+      const num = numMatch[1];
+      const body = numMatch[2].trim();
+      // Extract author (last line italic)
+      const lines = body.split('\n');
+      const lastLine = lines[lines.length - 1];
+      const isAuthor = /^[A-ZÄÖÜ][a-zäöü]+,\s*\d+/.test(lastLine);
+      const mainText = isAuthor ? lines.slice(0, -1).join('\n') : body;
+      const author = isAuthor ? lastLine : '';
+      html += `<div class="letter-block">
+        <div class="letter-meta">
+          <div class="letter-badge">${num === 'Beispiel' ? 'B' : num}</div>
+          ${author ? `<div class="letter-author">${author}</div>` : ''}
+        </div>
+        <div class="letter-text">${tokenize(mainText, body)}</div>
+      </div>`;
+    } else {
+      html += `<div class="letter-block"><div class="letter-text">${tokenize(trimmed, trimmed)}</div></div>`;
+    }
+  });
+  c.innerHTML = html;
+}
+
+// ── TEST ──
+function renderTest() {
+  const c = document.getElementById('test-container');
+  const submitBtn = document.getElementById('submit-btn');
+  document.getElementById('result-card').classList.remove('on');
+
+  if (!currentTask.questions.length) {
+    c.innerHTML = '<div class="empty-state"><div>Bu tapşırıqda sual yoxdur.</div></div>';
+    submitBtn.style.display = 'none';
+    return;
+  }
+
+  c.innerHTML = currentTask.questions.map((q, i) => {
+    let optsHtml = '';
+    if (q.type === 'janein') {
+      optsHtml = `<div class="test-opts ja-nein">
+        <button class="opt-btn" id="opt-${i}-Ja" onclick="selectOpt(${i},'Ja',this)">Ja</button>
+        <button class="opt-btn" id="opt-${i}-Nein" onclick="selectOpt(${i},'Nein',this)">Nein</button>
+      </div>`;
+    } else {
+      const opts = (q.options || []).map(o =>
+        `<button class="opt-btn" id="opt-${i}-${o.label}" onclick="selectOpt(${i},'${o.label}',this)">${o.label}. ${o.text}</button>`
+      ).join('');
+      optsHtml = `<div class="test-opts">${opts}</div>`;
+    }
+    return `<div class="test-q" id="tq-${i}">
+      <div class="test-q-label">Sual ${i+1}</div>
+      <div class="test-q-text">${tokenize(q.text, q.text)}</div>
+      ${optsHtml}
+      <div class="q-explanation" id="exp-${i}"></div>
+    </div>`;
+  }).join('');
+
+  submitBtn.style.display = 'block';
+}
+
+function selectOpt(qi, val, btn) {
+  if (testSubmitted) return;
+  userAnswers[qi] = val;
+  const q = currentTask.questions[qi];
+  const opts = q.type === 'janein' ? ['Ja', 'Nein'] : (q.options || []).map(o => o.label);
+  opts.forEach(o => {
+    const b = document.getElementById(`opt-${qi}-${o}`);
+    if (b) b.className = 'opt-btn' + (o === val ? ' selected' : '');
+  });
+}
+
+function submitTest() {
+  testSubmitted = true;
+  let score = 0;
+  const total = currentTask.questions.length;
+
+  currentTask.questions.forEach((q, i) => {
+    const ua = userAnswers[i];
+    const correct = q.correct;
+    const opts = q.type === 'janein' ? ['Ja','Nein'] : (q.options||[]).map(o=>o.label);
+
+    opts.forEach(o => {
+      const b = document.getElementById(`opt-${i}-${o}`);
+      if (!b) return;
+      b.disabled = true;
+      b.className = 'opt-btn';
+      if (o === correct) b.classList.add('correct');
+      else if (o === ua && ua !== correct) b.classList.add('wrong');
+    });
+
+    if (ua === correct) {
+      score++;
+    } else {
+      // Show explanation
+      showExplanation(i, q, ua);
+    }
+  });
+
+  document.getElementById('submit-btn').style.display = 'none';
+  const rc = document.getElementById('result-card');
+  document.getElementById('result-num').textContent = `${score}/${total}`;
+  const pct = total ? score/total : 0;
+  document.getElementById('result-msg').textContent = pct === 1 ? '🎉 Əla! Hamısı düzgün!' : pct >= 0.7 ? '👍 Yaxşı nəticə!' : pct >= 0.5 ? '📚 Davam et!' : '💪 Bir daha cəhd et!';
+  rc.classList.add('on');
+  rc.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function showExplanation(i, q, userAns) {
+  const exp = document.getElementById(`exp-${i}`);
+  exp.classList.add('on');
+  exp.innerHTML = '<div class="exp-loading"><div class="spin"></div> İzah hazırlanır...</div>';
+
+  try {
+    const context = currentTask.text.substring(0, 600);
+    const prompt = `Alman dili B1 imtahan sualı:
+Sual: "${q.text}"
+Düzgün cavab: ${q.correct}
+${userAns ? `İstifadəçinin cavabı: ${userAns}` : 'İstifadəçi cavab vermədi'}
+
+Mətndən: "${context}"
+
+Azərbaycanca qısa izah ver (2-3 cümlə): niyə ${q.correct} düzgündür, mətndə hansı hissə bunu göstərir.`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 200,
+        system: 'Alman dili müəllimisən. Qısa, aydın Azərbaycanca izah ver.',
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const txt = data.content?.map(c => c.text||'').join('') || '';
+    exp.innerHTML = `<strong style="color:var(--accent2);">ℹ️ İzah:</strong> ${txt}`;
+  } catch(e) {
+    exp.innerHTML = '<span style="color:var(--muted);">İzah yüklənmədi.</span>';
+  }
+}
+
+// ── TRANSLATE ──
+function resetTranslate() {
+  document.getElementById('tr-output').classList.remove('on');
+  document.getElementById('tr-output').innerHTML = '';
+  const btn = document.getElementById('tr-btn');
+  btn.textContent = '🌐 Azərbaycancaya Çevir';
+  btn.disabled = false;
+}
+
+async function translateAll() {
+  const btn = document.getElementById('tr-btn');
+  const out = document.getElementById('tr-output');
+  btn.innerHTML = '<div class="spin" style="display:inline-block;border-color:rgba(255,255,255,0.2);border-top-color:white;margin-right:6px;"></div> Tərcümə edilir...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1200,
+        system: 'Alman dilindən Azərbaycancaya dəqiq ədəbi tərcümə et. Hər paraqrafı ayrıca tərcümə et, orijinal strukturu qoru. Yalnız tərcüməni ver.',
+        messages: [{ role: 'user', content: currentTask.text }]
+      })
+    });
+    const data = await res.json();
+    const translated = data.content?.map(c => c.text||'').join('') || '';
+    out.innerHTML = translated.split('\n\n').filter(Boolean).map(p =>
+      `<div class="tr-block">${p}</div>`
+    ).join('');
+    out.classList.add('on');
+    btn.textContent = '🔄 Yenidən Çevir';
+  } catch(e) {
+    out.innerHTML = '<div style="color:var(--red);">Xəta baş verdi.</div>';
+    out.classList.add('on');
+    btn.textContent = '🌐 Azərbaycancaya Çevir';
+  }
+  btn.disabled = false;
+}
+
+// ── WORD LOOKUP ──
+async function lookupWord(el, word, event) {
+  event.stopPropagation();
+  currentWord = word;
+  currentWordData = null;
+
+  document.getElementById('pw').textContent = word;
+  document.getElementById('pi').textContent = '';
+  document.getElementById('pc').innerHTML = '<div class="loading"><div class="spin"></div> Yüklənir...</div>';
+  updateSaveBtn();
+
+  const popup = document.getElementById('popup');
+  const overlay = document.getElementById('overlay');
+  popup.classList.add('on');
+  overlay.classList.add('on');
+
+  // Position
+  const rect = el.getBoundingClientRect();
+  const pw = 290;
+  let left = rect.left + window.scrollX;
+  if (left + pw > window.innerWidth - 10) left = window.innerWidth - pw - 10;
+  if (left < 10) left = 10;
+  let top = rect.bottom + window.scrollY + 8;
+  popup.style.left = left + 'px';
+  popup.style.top = top + 'px';
+
+  try {
+    const ctx = decodeURIComponent(el.dataset.ctx || '');
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 250,
+        system: 'Alman-Azərbaycanca lüğət assistenti. YALNIZ JSON cavab ver, heç bir əlavə mətn olmadan:\n{"translation":"Azərbaycanca","meaning":"Bu cümlədəki mənası (Azərbaycanca, qısa)","infinitiv":"Sözün əsas/məsdər forması (Almanca)"}',
+        messages: [{ role: 'user', content: `Söz: "${word}"\nCümlə: "${ctx}"` }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.map(c => c.text||'').join('').replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(raw);
+    currentWordData = parsed;
+    document.getElementById('pi').textContent = parsed.infinitiv ? `məsdər: ${parsed.infinitiv}` : '';
+    document.getElementById('pc').innerHTML = `<div class="ptr">${parsed.translation}</div><div class="pmn">${parsed.meaning}</div>`;
+  } catch(e) {
+    document.getElementById('pc').innerHTML = '<span style="font-size:13px;color:var(--red);">Xəta baş verdi.</span>';
+  }
+  updateSaveBtn();
+}
+
+function closePopup() {
+  document.getElementById('popup').classList.remove('on');
+  document.getElementById('overlay').classList.remove('on');
+}
+
+function saveWord() {
+  if (!currentWord) return;
+  const idx = dictionary.findIndex(d => d.word === currentWord);
+  if (idx >= 0) {
+    dictionary.splice(idx, 1);
+  } else {
+    dictionary.push({ word: currentWord, translation: currentWordData?.translation||'—', infinitiv: currentWordData?.infinitiv||'' });
+  }
+  localStorage.setItem('b1-dict', JSON.stringify(dictionary));
+  updateSaveBtn();
+  updateSavedHighlights();
+  renderDict();
+}
+
+function updateSaveBtn() {
+  const btn = document.getElementById('btn-save');
+  const saved = dictionary.find(d => d.word === currentWord);
+  btn.textContent = saved ? '✓ Lüğətdə var' : '＋ Lüğətə əlavə et';
+  btn.className = 'btn-save' + (saved ? ' saved' : '');
+}
+
+function updateSavedHighlights() {
+  document.querySelectorAll('.word').forEach(el => {
+    const w = el.textContent.replace(/[„""]/g,'');
+    el.classList.toggle('saved', !!dictionary.find(d => d.word === w));
+  });
+}
+
+// ── DICTIONARY ──
+function renderDict() {
+  const c = document.getElementById('dict-container');
+  document.getElementById('dict-count').textContent = dictionary.length;
+  if (!dictionary.length) {
+    c.innerHTML = '<div class="empty-state"><div class="big">📖</div><div>Hələ söz əlavə etməmisiniz.<br>Mətndə söz üzərinə vurun.</div></div>';
+    return;
+  }
+  c.innerHTML = dictionary.map((d,i) => `
+    <div class="dict-item">
+      <div>
+        <div class="dict-word">${d.word}</div>
+        <div class="dict-tr">${d.translation}</div>
+        ${d.infinitiv ? `<div class="dict-inf">məsdər: ${d.infinitiv}</div>` : ''}
+      </div>
+      <button class="btn-icon del" onclick="removeFromDict(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeFromDict(i) {
+  dictionary.splice(i, 1);
+  localStorage.setItem('b1-dict', JSON.stringify(dictionary));
+  renderDict();
+  updateSavedHighlights();
+}
+
+// ── PRELOAD DEMO TASK ──
+if (!tasks.length) {
+  tasks = [{
+    name: 'Leserbriefe – Killerspiele',
+    text: `Beispiel.\nMan hat bis jetzt nicht wissenschaftlich gezeigt, dass sogenannte Gewaltspiele einen Einfluss auf das Verhalten von Jugendlichen haben? So ein Blödsinn! Ist doch logisch, dass so massive Bilder die Gedanken beeinflussen! Für mich ist klar: Durch solche Spiele kann viel Unglück und Schaden entstehen, die müssen weg!\nNiko, 52, Saarbrücken\n\n20.\nIch könnte mir vorstellen, dass ein Verbot die gegenteilige Wirkung hätte, denn ein verbotenes Spiel ist doch noch interessanter als ein nicht verbotenes! Außerdem ist es gar nicht möglich, alle Killerspiele abzuschaffen, weil es davon schon viel zu viele gibt. Mein Fazit: Warum "Killerspiele" verbieten, wenn es im Endeffekt sowieso alle spielen und das Ganze gerade durch ein Verbot noch interessanter wird?\nStefan, 19, Graz\n\n21.\nWer entscheidet letztlich darüber, welche Spiele man nicht braucht? Dürfen diese Menschen dann auch darüber entscheiden, welche Bücher, Filme oder Musik wir nicht brauchen? Viel wichtiger ist es doch, dass Kinder und Jugendliche lernen, selbst zwischen virtueller und realer Gewalt zu unterscheiden!\nDagmar, 23, Leipzig\n\n22.\n"Töten auf Probe" soll erlaubt sein? Das bedeutet: Mal schnell zu üben, wie man Jemanden umbringt, ist eine Freizeitbeschäftigung. Wie zynisch kann man sein? Nicht jeder wird zum Glück zum Monster, der sich mit so viel Gewalt und Zerstörung beschäftigt. Die Einstellung dahinter ist aber Ausdruck einer unglaublichen Gleichgültigkeit. Das muss man stoppen, und zwar schnell.\nKathleen, 49, Cuxhaven\n\n23.\nIch spiele sogenannte Killerspiele wie CaDu seit bald drei Jahren regelmäßig. Ich habe eine kleine Tochter, eine Frau und einen Job und spiele für den Ausgleich. Nur weil es mal dazu kommt, dass einer auf dieser Welt das Spiel als Realität sieht und durchdreht, müssen dann all die anderen ein Verbot hinnehmen? Es wäre besser, die Altersbeschränkung auf 18 Jahre festzulegen und sie auch strikt einzuhalten.\nMarius, 34, St. Gallen\n\n24.\n"Killerspiele" machen schnell aggressiv und man wird davon abhängig. Außerdem besteht die Gefahr, dass jemand nicht mit solchen Spielen umgehen kann und zum Nachahmungstäter wird. Das sind nur zwei Gründe, warum man gegen diese Spiele endlich etwas tun sollte.\nJonny, 21, Berlin\n\n25.\nIn dieser Diskussion fehlt immer die genaue Kenntnis! Meistens ist es bei sogenannten "Killerspielen" nämlich so, dass man in einem Team spielt. Ein solches Spiel stärkt also den Teamgeist. Außerdem steht die Taktik im Vordergrund und nicht eine bestimmte Methode, jemanden umzubringen. So wird das taktische bzw. logische Denken gefördert!\nRobert, 18, Winterthur\n\n26.\nIch denke, dass gewisse Situationen oder Dinge einen Menschen dazu bringen können, etwas zu tun, das er sonst nicht tun würde. Das kann gerade bei sogenannten "Killerspielen" der Fall sein. Deshalb scheint mir ein Verbot sinnvoll zu sein, auch wenn so ein Verbot allein wahrscheinlich nicht viel nützt, denn Killerspiele sind ja nur eine "Inspirationsquelle" für Gewalt.\nMarinette, 38, Frankfurt`,
+    questions: [
+      { type: 'janein', text: 'Stefan – Killerspiellərin qadağan edilməsini dəstəkləyirmi?', correct: 'Nein' },
+      { type: 'janein', text: 'Dagmar – Killerspiellərin qadağan edilməsini dəstəkləyirmi?', correct: 'Nein' },
+      { type: 'janein', text: 'Kathleen – Killerspiellərin qadağan edilməsini dəstəkləyirmi?', correct: 'Ja' },
+      { type: 'janein', text: 'Marius – Killerspiellərin qadağan edilməsini dəstəkləyirmi?', correct: 'Nein' },
+      { type: 'janein', text: 'Jonny – Killerspiellərin qadağan edilməsini dəstəkləyirmi?', correct: 'Ja' },
+      { type: 'janein', text: 'Robert – Killerspiellərin qadağan edilməsini dəstəkləyirmi?', correct: 'Nein' },
+      { type: 'janein', text: 'Marinette – Killerspiellərin qadağan edilməsini dəstəkləyirmi?', correct: 'Ja' }
+    ]
+  }];
+  localStorage.setItem('b1-tasks', JSON.stringify(tasks));
+  renderTaskList();
+}
+</script>
+</body>
+</html>
